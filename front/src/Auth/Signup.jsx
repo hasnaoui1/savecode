@@ -4,6 +4,8 @@ import axiosInstance from "../services/axiosInstance";
 
 function SignUp() {
   const navigate = useNavigate();
+  const [error , setError]  = useState("");
+
   const [formData, setFormData] = useState({
     email: "",
     username: "",
@@ -14,7 +16,7 @@ function SignUp() {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (formData.password !== formData.confirmPassword) {
-      alert("Passwords do not match");
+      setError("Passwords do not match");
       return;
     }
 
@@ -25,7 +27,7 @@ function SignUp() {
         username: formData.username,
       })
       .then(() => navigate("/signin"))
-      .catch((err) => console.error(err));
+      .catch((err) =>setError(err.message));
   };
 
   const handleChange = (e) => {
@@ -124,6 +126,11 @@ function SignUp() {
               placeholder="Re-enter your password"
             />
           </div>
+          {error && (
+              <p className="text-red-500 text-sm">
+                  {error}
+              </p>
+                  )}
 
           <button
             type="submit"

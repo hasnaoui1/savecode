@@ -6,6 +6,7 @@ import { UserContext } from "../services/UserContext";
 function SignIn() {
   const { setToken } = useContext(UserContext);
   const navigate = useNavigate();
+  const [error , setError]  = useState("");
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -20,7 +21,10 @@ function SignIn() {
         setToken(res.token);
         navigate("/");
       })
-      .catch((err) => console.error(err));
+      .catch((err) =>{
+        console.error(err),
+        setError(err.message);
+      } );
   };
 
   const handleChange = (e) => {
@@ -83,6 +87,11 @@ function SignIn() {
                 placeholder="Your password"
               />
             </div>
+            {error && (
+              <p className="text-red-500 text-sm">
+                  {error}
+              </p>
+                  )}
 
             <button
               type="submit"
@@ -95,7 +104,8 @@ function SignIn() {
           <p className="mt-6 text-xs text-gray-300">
             By signing in, you agree to our Terms & Conditions and Privacy
             Policy.
-          </p>
+          </p> 
+       
         </div>
 
         <div className="hidden md:block w-1/2 bg-[#212529] border-l border-gray-800 relative">
