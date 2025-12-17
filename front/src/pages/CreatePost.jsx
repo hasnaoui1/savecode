@@ -12,12 +12,14 @@ export default function CreatePost() {
   const { snippetId } = useParams();
   const navigate = useNavigate();
   const [text, setText] = useState("");
-  const [response, setResponse] = useState("");
+  const [response, setResponse] = useState(null); // Init as null to distinguish from empty string
   const { snippet, fetchSnippetById, resetSnippet } = useSnippets();
   const { socket, isCollaborating, collaboratingSnippetId } =
     useContext(SocketContext);
   const [isThinking, setIsThinking] = useState(false);
   const [isStreaming, setIsStreaming] = useState(false);
+  const [isExecuting, setIsExecuting] = useState(false); // New execution state
+  const [executionError, setExecutionError] = useState(null); // New error state
   const [comments, setComments] = useState([]);
   const [isCreating, setIsCreating] = useState(false);
 
@@ -33,7 +35,7 @@ export default function CreatePost() {
      
       setIsCreating(true);
       setText("");
-      setResponse("");
+      setResponse(null);
       setComments([]);
       resetSnippet();
       try {
@@ -104,6 +106,10 @@ export default function CreatePost() {
   const saveAndRun = async () => {
     if (!snippetId) return;
 
+    setIsExecuting(true);
+    setExecutionError(null);
+    setResponse(null);
+
     try {
       console.log("Saving code for snippet:", snippetId);
       await axiosInstance.put(`/updateS/${snippetId}`, { code: text });
@@ -116,6 +122,9 @@ export default function CreatePost() {
       console.log("Fetched snippet:", newSnippet);
     } catch (err) {
       console.error("Error in saveAndRun:", err.message);
+      setExecutionError(err.message || "Failed to execute snippet");
+    } finally {
+      setIsExecuting(false);
     }
   };
 
@@ -194,12 +203,29 @@ export default function CreatePost() {
             initialLikes={snippet?.favoritesCount}
             snippetOwnerId={snippet?.userId}
           />
-          {response && (
-            <div className="mt-4 bg-black text-white p-4 rounded-lg">
-              <strong>Output:</strong>
-              <pre className="mt-2 whitespace-pre-wrap">{response}</pre>
+          
+          {/* Execution Status & Output */}
+          {isExecuting && (
+            <div className="mt-4 bg-[#1a1a1d] text-blue-400 p-4 rounded-lg animate-pulse">
+              Running code...
             </div>
           )}
+          
+          {executionError && (
+            <div className="mt-4 bg-red-900/50 border border-red-500 text-red-100 p-4 rounded-lg">
+              <strong>Error:</strong> {executionError}
+            </div>
+          )}
+
+          {response !== null && !isExecuting && !executionError && (
+            <div className="mt-4 bg-black text-white p-4 rounded-lg border border-gray-800">
+              <strong>Output:</strong>
+              <pre className="mt-2 whitespace-pre-wrap font-mono">
+                {response === "" ? <span className="text-gray-500 italic">No output</span> : response}
+              </pre>
+            </div>
+          )}
+          
           <CommentsSection comments={comments} setComments={setComments} />
         </>
       )}

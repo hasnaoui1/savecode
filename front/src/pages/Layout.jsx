@@ -5,11 +5,11 @@ import { UserContext } from "../services/UserContext";
 import Navbar2 from "../components/Navbar2";
 
 export default function Layout() {
-  const { token: authToken } = useContext(UserContext);
+  const { token} = useContext(UserContext);
 
   return (
     <div className="min-h-screen bg-[#0e0e10] text-white flex flex-col">
-      {authToken ? <Navbar /> : <Navbar2 />}
+      {token ? <Navbar /> : <Navbar2 />}
       <main className="flex-1 p-4">
         <Outlet />
       </main>

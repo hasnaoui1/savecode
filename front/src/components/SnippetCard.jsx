@@ -1,12 +1,16 @@
 import { format } from "date-fns";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { SnippetContext, useSnippets } from "../services/SnippetContext";
+import { useSnippets } from "../services/SnippetContext";
 
-const SnippetCard = ({ snippet }) => {
+
+
+
+const SnippetCard = ({ snippet , hideMenu = false}) => {
   const navigate = useNavigate();
   const [modal,setModal] = useState(false);
   const  {deleteSnippet} = useSnippets()
+
   const handleModal = (e)=>{
     e.stopPropagation();
     setModal(!modal);
@@ -34,12 +38,12 @@ const SnippetCard = ({ snippet }) => {
         <h3 className="text-2xl font-bold text-white">
           {snippet.title || "Untitled"}
         </h3>
-        <div  onClick={handleModal}className="text-gray-400 text-2xl cursor-pointer">⋮</div>
+         {!hideMenu&&<div  onClick={handleModal}className="text-gray-400 text-2xl cursor-pointer">⋮</div> }
       </div>
 
       <div className="text-base text-gray-300 flex items-center gap-3 mb-2">
         <span>📅 {format(new Date(snippet.createdAt), "MMM dd, yyyy")}</span>
-        <span>• 👤 {snippet.owner}</span>
+        <span>• 👤{snippet.User?.username}</span>
       </div>
 
       <div className="text-base text-gray-400 mb-4">

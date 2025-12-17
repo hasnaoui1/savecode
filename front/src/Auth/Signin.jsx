@@ -88,7 +88,7 @@ function SignIn() {
               />
             </div>
             {error && (
-              <p className="text-red-500 text-sm">
+              <p id="error" className="text-red-500 text-sm">
                   {error}
               </p>
                   )}

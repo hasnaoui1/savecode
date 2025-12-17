@@ -29,7 +29,7 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="flex items-center justify-between bg-[#1e1e1e] px-6 py-4">
+    <nav id="navbar" className="flex items-center justify-between bg-[#1e1e1e] px-6 py-4">
       <NavLink to="/">
         <div className="flex items-center space-x-2">
           <img src="/logo.png" alt="Logo" className="w-6 h-6" />

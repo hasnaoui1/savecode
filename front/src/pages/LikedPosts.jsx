@@ -1,21 +1,38 @@
-import React, { useContext } from 'react';
-import { useSnippets } from '../services/SnippetContext';
-import { UserContext } from '../services/UserContext';
-import SnippetCard from '../components/SnippetCard';
+import { useEffect, useState } from "react";
+import axiosInstance from "../services/axiosInstance";
+import SnippetCard from "../components/SnippetCard"
 
 const LikedPosts = () => {
-  const { snippets } = useSnippets();
-  const { user } = useContext(UserContext);
+  const [favorites, setFavorites] = useState([]);
 
-  const likedSnippets = snippets.filter((s) =>
-    s?.Favorites?.some((f) => f.userId === user?.id)
-  );
+  const getFavorites = async () => {
+    try {
+      const res = await axiosInstance.get("/favorites");
+
+
+      const validFavorites = res
+        .filter(f => f.Snippet)
+        .map(f => f.Snippet);
+
+      setFavorites(validFavorites);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  useEffect(() => {
+    getFavorites();
+  }, []);
 
   return (
     <div className="w-full p-4">
       <div className="grid grid-cols-2 gap-4">
-        {likedSnippets.map((snippet, index) => (
-          <SnippetCard key={index} snippet={snippet} />
+        {favorites.map(snippet => (
+          <SnippetCard
+            key={snippet.id}
+            snippet={snippet}
+            hideMenu={true}
+          />
         ))}
       </div>
     </div>

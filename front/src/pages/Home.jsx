@@ -1,6 +1,4 @@
-import React, { useContext, useEffect } from "react";
-import Navbar2 from "../components/Navbar2";
-import { UserContext } from "../services/UserContext";
+
 
 const Home = () => {
   

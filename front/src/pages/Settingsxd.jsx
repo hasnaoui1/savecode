@@ -7,15 +7,33 @@ const Settingsxd = () => {
 
   const [updatedUsername, setUpdatedUsername] = useState("");
   const [updatedEmail, setUpdatedEmail] = useState("");
+  const [emailError, setEmailError] = useState("");
 
   useEffect(() => {
     if (user) {
       setUpdatedUsername(user.username || "");
-      setUpdatedEmail(user.email || "");
+      setUpdatedEmail(user.email);
     }
   }, [user]);
 
+  const isValidEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
   const handleUpdateProfile = async () => {
+    setEmailError("");
+
+    if (!updatedEmail || updatedEmail.trim() === "") {
+      setEmailError("Email is required");
+      return;
+    }
+
+    if (!isValidEmail(updatedEmail)) {
+      setEmailError("Please enter a valid email address");
+      return;
+    }
+
     try {
       const res = await axiosInstance.put(`/users/${user.id}`, {
         username: updatedUsername,
@@ -115,15 +133,28 @@ const Settingsxd = () => {
               />
             </div>
             <div>
-              <label className="block text-sm text-neutral-400 mb-1">
+              <label htmlFor="email" className="block text-sm text-neutral-400 mb-1">
                 Email
               </label>
               <input
+                id="email"
+                name="email"
                 type="email"
+                required
                 value={updatedEmail}
-                onChange={(e) => setUpdatedEmail(e.target.value)}
-                className="w-full bg-neutral-800 px-3 py-2 rounded focus:outline-none"
+                onChange={(e) => {
+                  setUpdatedEmail(e.target.value);
+                  setEmailError(""); // Clear error when user types
+                }}
+                className={`w-full bg-neutral-800 px-3 py-2 rounded focus:outline-none ${
+                  emailError ? "border border-red-500" : ""
+                }`}
               />
+              {emailError && (
+                <p id="emailError" className="text-red-500 text-sm mt-1">
+                  {emailError}
+                </p>
+              )}
             </div>
           </div>
           <button

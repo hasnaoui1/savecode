@@ -4,6 +4,7 @@ import { UserContext } from "../services/UserContext";
 import { useContext , useState } from "react";
 import { format } from "date-fns";
 import LikedPosts from "./LikedPosts";
+import { Link } from "react-router-dom";
 const Posts = () => {
 
   const { user } = useContext(UserContext);
@@ -35,18 +36,19 @@ const Posts = () => {
             </span>
           ))}
         </div>
-
-        <button className="mt-4 w-full bg-gray-800 px-4 py-2 rounded">
-          Edit Profile
-        </button>
+          <Link to="/settings">
+            <button className="mt-4 w-full bg-gray-800 px-4 py-2 rounded cursor-pointer">
+              Edit Profile
+            </button>
+        </Link>
       </div>
 
       <div className="w-3/4 p-4">
         <div className="flex gap-4 mb-4 border-b border-gray-600">
-          <button onClick={()=>setActiveTab("posts") }className={`pb-2 font-semibold ${activeTab=="posts"?"border-b-2 border-white text-white" : ""}`}>
+          <button onClick={()=>setActiveTab("posts") }className={`pb-2 cursor-pointer font-semibold ${activeTab=="posts"?"border-b-2 border-white text-white" : ""}`}>
             Posts
           </button>
-          <button  onClick={()=>setActiveTab("likes")}className={`pb-2 font-semibold ${activeTab=="likes"?"border-b-2 border-white text-white" : ""}`}>Likes</button>
+          <button  onClick={()=>setActiveTab("likes")}className={`pb-2 cursor-pointer font-semibold ${activeTab=="likes"?"border-b-2 border-white text-white" : ""}`}>Likes</button>
         </div>
 
         { activeTab === "posts"?<div className="grid grid-cols-2 gap-4">
